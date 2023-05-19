@@ -20,4 +20,11 @@ public class LogController {
 		return "success";
 	}
 	
+	@GetMapping("/log/all")
+	public String findAll() {
+		log.info("findAll");
+		logService.findAll();
+		return "success";
+	}
+	
 }
