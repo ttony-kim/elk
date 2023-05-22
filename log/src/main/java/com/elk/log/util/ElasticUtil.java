@@ -98,7 +98,9 @@ public class ElasticUtil {
 		}*/
 		
 		// from, size
-		/*SearchRequest sr = SearchRequest.of(s -> s.index("test5").sort(d -> d.field(f -> f.field("@timestamp").order(SortOrder.Asc))).from(50).size(10));
+//		SearchRequest sr = SearchRequest.of(s -> s.index("test5").sort(d -> d.field(f -> f.field("@timestamp").order(SortOrder.Asc))).from(50).size(10));
+		SearchRequest sr = SearchRequest.of(s -> s.index("test5").sort(d -> d.field(f -> f.field("@timestamp").order(SortOrder.Asc))).from(30).size(10)
+				.query(q -> q.term(t -> t.field("thread_name").value("main"))));
 		
 		SearchResponse<ElasticDto> sre = client.search(sr, ElasticDto.class);
 		long a = sre.hits().total().value();
@@ -106,7 +108,7 @@ public class ElasticUtil {
 		List<Hit<ElasticDto>> hits = sre.hits().hits();
 		for(Hit<ElasticDto> object: hits) {
 			System.out.println(object.source());
-		}*/
+		}
 		
 		
 		System.out.println("end");

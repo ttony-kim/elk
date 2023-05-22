@@ -3,6 +3,10 @@ package com.elk.log.web;
 import java.io.IOException;
 import java.util.List;
 
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -23,6 +27,7 @@ public class LogController {
 	
 	public final LogService logService;
 	public final ElasticsearchClient client;
+//	public final  ElasticsearchOperations elasticsearchOperations;
 	
 	@GetMapping("/log")
 	public String createLog() {
@@ -47,6 +52,26 @@ public class LogController {
 			System.out.println(object.source());
 		}
 		return "test";
+	}
+	
+	@GetMapping("/log/page")
+	public String api() {
+		Pageable page = PageRequest.of(5, 10, Sort.by(Sort.Direction.DESC, "@timestamp"));
+		log.info("pageSize = {}, pageNo = {}", page.getPageSize(), page.getPageNumber());
+		logService.findAll2(page);
+		return "api";
+	}
+	
+	@GetMapping("/log/find2")
+	public String find2() {
+		logService.findAll3();
+		return "find2";
+	}
+	
+	@GetMapping("/log/findByThreadName")
+	public String findByThreadName() {
+		logService.findByThreadName();
+		return "findByThreadName";
 	}
 	
 }
