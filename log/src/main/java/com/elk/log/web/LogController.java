@@ -6,7 +6,6 @@ import java.util.List;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -27,7 +26,6 @@ public class LogController {
 	
 	public final LogService logService;
 	public final ElasticsearchClient client;
-//	public final  ElasticsearchOperations elasticsearchOperations;
 	
 	@GetMapping("/log")
 	public String createLog() {
@@ -56,7 +54,7 @@ public class LogController {
 	
 	@GetMapping("/log/page")
 	public String api() {
-		Pageable page = PageRequest.of(5, 10, Sort.by(Sort.Direction.DESC, "@timestamp"));
+		Pageable page = PageRequest.of(9990, 10, Sort.by(Sort.Direction.DESC, "@timestamp"));
 		log.info("pageSize = {}, pageNo = {}", page.getPageSize(), page.getPageNumber());
 		logService.findAll2(page);
 		return "api";
@@ -72,6 +70,36 @@ public class LogController {
 	public String findByThreadName() {
 		logService.findByThreadName();
 		return "findByThreadName";
+	}
+	
+	@GetMapping("/log/scroll")
+	public String scroll() {
+		logService.scroll();
+		return "scroll";
+	}
+	
+	@GetMapping("/log/scroll2")
+	public String scroll2(int pageIndex, int pageSize) {
+		logService.scroll2(pageIndex, pageSize);
+		return "scroll2";
+	}
+	
+	@GetMapping("/log/searchBy")
+	public String searchBy() {
+		logService.searchBy();
+		return "searchBy";
+	}
+	
+	@GetMapping("/log/criteria")
+	public String criteria() {
+		logService.criteria();
+		return "criteria";
+	}
+	
+	@GetMapping("/log/findBy")
+	public String findBy() {
+		logService.findBy();
+		return "findBy";
 	}
 	
 }

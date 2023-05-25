@@ -7,6 +7,9 @@ import java.util.concurrent.CompletableFuture;
 
 import org.apache.http.HttpHost;
 import org.elasticsearch.client.RestClient;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.builder.SearchSourceBuilder;
+import org.elasticsearch.search.sort.SortBuilders;
 
 import com.elk.log.elastic.ElasticDto;
 import com.fasterxml.jackson.core.JsonGenerator;
@@ -109,6 +112,15 @@ public class ElasticUtil {
 		for(Hit<ElasticDto> object: hits) {
 			System.out.println(object.source());
 		}
+		
+		SearchSourceBuilder ssb = new SearchSourceBuilder()
+				.size(10)
+				.query(QueryBuilders.matchQuery("thread_name", "main"))
+				.sort(SortBuilders.fieldSort("@timestamp").order(org.elasticsearch.search.sort.SortOrder.DESC));
+		
+		org.elasticsearch.action.search.SearchRequest sssr = new org.elasticsearch.action.search.SearchRequest("test5").source(ssb);
+		
+//		SearchResponse<ElasticDto> searchResponse = client.search(sssr, ElasticDto.class);
 		
 		
 		System.out.println("end");

@@ -79,7 +79,7 @@ public class LogAspect {
 		map.put("value", returnValue);
 		list.add(map);
 		
-		logDto.setParamList(list);
+		logDto.setParamList(list);	
 		
 		LogUtil.printLog(logDto);
 		log.info("{}", logDto);
