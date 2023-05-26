@@ -85,8 +85,8 @@ public class LogController {
 	}
 	
 	@GetMapping("/log/searchBy")
-	public String searchBy() {
-		logService.searchBy();
+	public String searchBy(Pageable pageable) {
+		logService.searchBy(pageable);
 		return "searchBy";
 	}
 	
@@ -97,9 +97,20 @@ public class LogController {
 	}
 	
 	@GetMapping("/log/findBy")
-	public String findBy() {
-		logService.findBy();
+	public String findBy(int pageIndex, int pageSize) {
+		logService.findBy(pageIndex, pageSize);
 		return "findBy";
 	}
 	
+	@GetMapping("/log/findbyContaining")
+	public String findbyContaining() {
+		logService.findbyContaining();
+		return "findbyContaining";
+	}
+	
+	@GetMapping("/log/sort")
+	public String sort() {
+		logService.sort();
+		return "sort";
+	}
 }

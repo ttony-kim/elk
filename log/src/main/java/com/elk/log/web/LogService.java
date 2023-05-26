@@ -2,6 +2,7 @@ package com.elk.log.web;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -156,15 +157,17 @@ public class LogService {
 		
 	}
 	
-	public void searchBy() {
-		Stream<ElasticDto3> stream = logRepository2
-				.searchBy(PageRequest.of(0, 10, Sort.by(Direction.ASC , "doc_id")))
-				.skip(10000).limit(10); // 스트림 문법
-		System.out.println(stream);
-//		List<ElasticDto3> list = logRepository2.searchBy(PageRequest.of(0, 10)).skip(10000).limit(10).collect(Collectors.toList());
-//		list.forEach(m -> {
-//			System.out.println(m);
-//		});
+	public void searchBy(Pageable pageable) {
+//		Stream<ElasticDto3> stream = logRepository2
+//				.searchBy(PageRequest.of(0, 10, Sort.by(Direction.ASC , "doc_id")))
+//				.skip(10000).limit(10); // 스트림 문법
+//		System.out.println(stream);
+		
+		
+		List<ElasticDto3> list = logRepository2.searchBy(PageRequest.of(0, 10)).skip(10000).limit(10).collect(Collectors.toList());
+		list.forEach(m -> {
+			System.out.println(m);
+		});
 	}
 	
 	public void criteria() {
@@ -173,7 +176,8 @@ public class LogService {
 //		Query query2 = new CriteriaQuery(criteria);
 		
 		Pageable page = PageRequest.of(0, 10, Sort.by(Direction.DESC , "doc_id"));
-		Criteria c = Criteria.where("text_entry").contains("No");
+//		Criteria c = Criteria.where("text_entry").contains("No");
+		Criteria c = Criteria.where("text_entry").contains("ea"); // like 검색 가능
 		Query q = new CriteriaQuery(c).setPageable(page);
 		SearchHitsIterator<ElasticDto3> stream = operations.searchForStream(q, ElasticDto3.class);
 		
@@ -189,13 +193,19 @@ public class LogService {
 		});
 	}
 	
-	public void findBy() {
+	public void findBy(int pageIndex, int pageSize) {
+		// 전체
 		List<ElasticDto3> list = logRepository2
 				.findBy(PageRequest.of(0, 10, Sort.by(Direction.ASC , "doc_id")))
 				.skip(10000).limit(10).collect(Collectors.toList());
 
+//		List<ElasticDto3> list = logRepository2
+//				.findBy(PageRequest.of(0, 25))
+//				.skip(10000).collect(Collectors.toList());
+		
 		System.out.println(logRepository2.count());
 		
+		// 필드 검색
 //		List<ElasticDto3> list = logRepository2.findByTextEntry("lige").skip(400).limit(10).collect(Collectors.toList());
 //		long count = logRepository2.countByTextEntry("lige");
 //		System.out.println(count);
@@ -206,4 +216,33 @@ public class LogService {
 		});		
 	}
 	
+	public void findbyContaining() {
+		List<ElasticDto3> list = logRepository2.findByTextEntryContaining("lige").skip(0).limit(10).collect(Collectors.toList());
+		list.forEach(m -> {
+			System.out.println(m);
+		});
+		System.out.println(logRepository2.countByTextEntryContaining("lige"));
+	}
+	
+	public void sort() {
+		//전체
+//		List<ElasticDto3> list = logRepository2
+//				.findBy(Sort.by(Direction.DESC , "doc_id"))
+//				.skip(10000).limit(10).collect(Collectors.toList());
+		
+//		List<ElasticDto3> list = logRepository2
+//				.findByTextEntry("lige", Sort.by(Direction.ASC , "doc_id"))
+//				.skip(0)
+//				.limit(10)
+//				.collect(Collectors.toList());
+		
+//		List<ElasticDto3> list = logRepository2.findByTextEntry("NO", Sort.by(Direction.DESC , "doc_id")).collect(Collectors.toList());
+		
+		List<ElasticDto3> list = logRepository2.findByTextEntryOrderByDocIdDesc("NO").collect(Collectors.toList());
+		
+		
+		list.forEach(m -> {
+			System.out.println(m);
+		});
+	}
 }

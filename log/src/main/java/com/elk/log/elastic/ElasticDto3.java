@@ -11,7 +11,8 @@ import lombok.Data;
 public class ElasticDto3 {
 	
 	@Id //필수
-	private long doc_id;
+	@Field(name = "doc_id")
+	private long docId;
 	
 	private String play_name;
 	
