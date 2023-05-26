@@ -239,7 +239,7 @@ public class LogService {
 //		List<ElasticDto3> list = logRepository2.findByTextEntry("NO", Sort.by(Direction.DESC , "doc_id")).collect(Collectors.toList());
 		
 		List<ElasticDto3> list = logRepository2.findByTextEntryOrderByDocIdDesc("NO").collect(Collectors.toList());
-		
+		System.out.println(logRepository2.findByTextEntryOrderByDocIdDesc("NO").count());
 		
 		list.forEach(m -> {
 			System.out.println(m);
