@@ -17,6 +17,9 @@ public interface LogRepository2 extends ElasticsearchRepository<ElasticDto3, Lon
 	Stream<ElasticDto3> findBy(Pageable pageable);
 	Stream<ElasticDto3> findByTextEntry(String textEntry);
 	Stream<ElasticDto3> findByTextEntryContaining(String textEntry);
+	Stream<ElasticDto3> findByTextEntryContaining(String textEntry, Sort sort);
+	
+	long count();
 	long countByTextEntry(String textEntry);
 	long countByTextEntryContaining(String textEntry);
 	

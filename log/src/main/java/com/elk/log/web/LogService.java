@@ -4,11 +4,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.search.SearchHit;
+//import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.sort.SortBuilders;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -19,6 +21,7 @@ import org.springframework.data.domain.Sort.Order;
 import org.springframework.data.elasticsearch.client.elc.NativeQuery;
 import org.springframework.data.elasticsearch.core.AbstractElasticsearchTemplate;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
+import org.springframework.data.elasticsearch.core.SearchHit;
 import org.springframework.data.elasticsearch.core.SearchHitsIterator;
 import org.springframework.data.elasticsearch.core.SearchScrollHits;
 import org.springframework.data.elasticsearch.core.mapping.IndexCoordinates;
@@ -178,15 +181,20 @@ public class LogService {
 		Pageable page = PageRequest.of(0, 10, Sort.by(Direction.DESC , "doc_id"));
 //		Criteria c = Criteria.where("text_entry").contains("No");
 		Criteria c = Criteria.where("text_entry").contains("ea"); // like 검색 가능
-		Query q = new CriteriaQuery(c).setPageable(page);
+//		Query q = new CriteriaQuery(c).setPageable(page);
+		Query q = new CriteriaQuery(c).addSort(Sort.by(Direction.DESC , "doc_id"));
+		
 		SearchHitsIterator<ElasticDto3> stream = operations.searchForStream(q, ElasticDto3.class);
 		
 		List<ElasticDto3> sampleEntities = new ArrayList<>();
 		
 		while (stream.hasNext()) {
-			org.springframework.data.elasticsearch.core.SearchHit<ElasticDto3> ss= stream.next();
+			SearchHit<ElasticDto3> ss= stream.next();
 			sampleEntities.add(ss.getContent());
 		}
+		
+		long count = stream.getTotalHits();
+		System.out.println(count);
 		
 		sampleEntities.forEach(m -> {
 			System.out.println(m.toString());
@@ -239,10 +247,36 @@ public class LogService {
 //		List<ElasticDto3> list = logRepository2.findByTextEntry("NO", Sort.by(Direction.DESC , "doc_id")).collect(Collectors.toList());
 		
 		List<ElasticDto3> list = logRepository2.findByTextEntryOrderByDocIdDesc("NO").collect(Collectors.toList());
-		System.out.println(logRepository2.findByTextEntryOrderByDocIdDesc("NO").count());
+		long count = logRepository2.findByTextEntryOrderByDocIdDesc("NO").count();
+		System.out.println(count);
 		
 		list.forEach(m -> {
 			System.out.println(m);
 		});
+	}
+	
+	public void finaltest() {
+		String orderBy = "DESC";
+		
+		List<ElasticDto3> list = logRepository2.findByTextEntryContaining("NO", Sort.by("ASC".equals(orderBy) ? Direction.ASC : Direction.DESC, "doc_id"))
+//									.skip(0).limit(10)
+									.collect(Collectors.toList());
+		
+		long count = logRepository2.countByTextEntryContaining("NO");
+		System.out.println(count);
+		
+		AtomicInteger indexHolder = new AtomicInteger();
+		list.forEach((m) -> {
+			System.out.println(indexHolder.getAndIncrement() + "    " + m);
+		});
+		
+	
+		List<ElasticDto3> list2 = logRepository2.findBy(Sort.by(Direction.DESC , "doc_id")).skip(0).limit(10).collect(Collectors.toList());
+		long count2 = logRepository2.count();
+		System.out.println(count2);
+		list2.forEach(m -> {
+			System.out.println(m);
+		});
+//		
 	}
 }

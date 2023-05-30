@@ -113,4 +113,10 @@ public class LogController {
 		logService.sort();
 		return "sort";
 	}
+	
+	@GetMapping("/log/final")
+	public String finalTest() {
+		logService.finaltest();
+		return "finalTest";
+	}
 }
